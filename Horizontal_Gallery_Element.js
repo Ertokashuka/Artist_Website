@@ -1,0 +1,142 @@
+
+
+class Horizontal_Gallary extends HTMLElement {
+
+    constructor() {
+    super();
+
+        const code = this.attachShadow({ mode: 'open' });
+
+        code.innerHTML = `
+                <link rel="stylesheet" href="Gallery scroll CSS.css">
+        <div class="BG" id="BG">
+        </div>
+        <div class="button">
+            <button id="close-framed-img-btn" hidden>X</button>
+            <div class="imageFrame" id="imageFrame"></div>
+        </div>
+        <div class="outer-wrapper">
+            <div class="scroll-container" id="Custom_Gallery">
+                <img class="clickableimage" src="https://upload.wikimedia.org/wikipedia/commons/3/32/Googleplex_HQ_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original" />
+                <img class="clickableimage" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoFoUrVj30we-N4q0lhJzCk2_t2wPzxEh3yGwy3cFK_rdxESozxiTqaQ&s=10" />
+                <img class="clickableimage" src="https://media.istockphoto.com/id/185324978/photo/three-metre-long-log-isolated-on-white.jpg?s=612x612&w=0&k=20&c=7UoR5us1xiS8ZYWkjV75NvOjDLr0ES-CbGv00FVFEwk=" />
+                <img class="clickableimage" src="https://cdn.discordapp.com/attachments/1491917577558167643/1573427683067691049/image.png?ex=6b01f838&is=6b00a6b8&hm=22bd2b8f410b6cfd287533482557f1b0ef084561f4c5be5dbce3a1b1e58b19cb&" />
+            </div>
+        </div>
+        `;
+
+        let horizontal = document.getElementById("Custom_Gallery");
+        horizontal.addEventListener("wheel", (e) => {
+            e.preventDefault();
+            horizontal.scrollLeft += e.deltaY * 2;
+        })
+        const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        const deletor = new AbortController();
+        const imgs = document.getElementsByClassName("clickableimage")
+        const frame = document.getElementById("imageFrame")
+        const events = ['click', 'keydown']
+        const closeButtton = document.getElementById("close-framed-img-btn")
+        const BG = document.getElementById("BG")
+        let ratio = "empty"
+
+        function handler() {}
+
+        function handler2() {}
+        for (let i = 0; i < imgs.length; i++) {
+            const img = imgs[i];
+            if (img == undefined) {
+                continue;
+            }
+            closeButtton.hidden = true
+            img.addEventListener('click', () => {
+                document.body.inert = true
+                const rect = img.getBoundingClientRect()
+                const copy = img.cloneNode(true)
+                // Opening animation setup
+                document.documentElement.style.setProperty('--start-x', `${rect.left}px`);
+                document.documentElement.style.setProperty('--start-y', `${rect.top}px`);
+                document.documentElement.style.setProperty('--startWidth', `${rect.width}`)
+                document.documentElement.style.setProperty('--startHeight', `${rect.height}`)
+                copy.height = rect.height
+                copy.width = rect.width
+                copy.style.position = 'fixed';
+                copy.style.top = `${rect.top}px`;
+                copy.style.left = `${rect.left}px`;
+                copy.id = "framed"
+                // Opening animation ratio
+                if (copy.height > copy.width) {
+                    ratio = "DetailsP"
+                } else {
+                    ratio = "DetailsL"
+                }
+                // Play opening animation
+                frame.appendChild(copy)
+                BG.classList.remove("DetailsBg")
+                BG.classList.remove("Exit")
+                BG.classList.add("DetailsBg")
+                copy.classList.remove(ratio)
+                void img.offsetWidth;
+                copy.classList.add(ratio)
+                copy.addEventListener('animationend', () => {
+                    console.log("occur")
+                    document.body.inert = false
+                    closeButtton.hidden = false
+                    document.getElementsByClassName("clickable image").inert = true
+                    document.getElementsByClassName("scroll-container").inert = true
+                    const rect2 = copy.getBoundingClientRect()
+                    document.documentElement.style.setProperty('--end-x', `${rect2.left}px`);
+                    document.documentElement.style.setProperty('--end-y', `${rect2.top}px`);
+                    document.documentElement.style.setProperty('--endWidth', `${rect2.width}`)
+                    document.documentElement.style.setProperty('--endHeight', `${rect2.height}`)
+                    closeButtton.addEventListener('click', () => {
+                        document.body.inert = true
+                        closeButtton.hidden = true
+                        BG.classList.remove("Exit")
+                        void BG.offsetWidth;
+                        BG.classList.add("Exit")
+                        copy.classList.remove(ratio)
+                        void img.offsetWidth;
+                        copy.classList.add("ExitDetails")
+                        copy.addEventListener('animationend', () => {
+                            copy.remove();
+                            document.getElementsByClassName("scroll-container").inert = false
+                            document.getElementsByClassName("clickable image").inert = false
+                            document.body.inert = false
+                        });
+                    }, {
+                        once: true
+                    })
+                    document.addEventListener('keydown', (event) => {
+                                if (event.key === "Escape") {
+                                    closeButtton.hidden = true
+                                    document.body.inert = true
+                                    BG.classList.remove("Exit")
+                                    void BG.offsetWidth;
+                                    BG.classList.add("Exit")
+                                    copy.classList.remove(ratio)
+                                    copy.classList.add("ExitDetails")
+                                    copy.addEventListener('animationend', () => {
+                                        copy.remove();
+                                        document.getElementsByClassName("scroll-container").inert = false
+                                        document.getElementsByClassName("clickable image").inert = false
+                                        document.body.inert = false
+                                    }, {
+                                        once: true
+                                    })
+                                }
+                            }, {
+                                once: true
+                            });
+                }, {
+                    once: true
+                })
+            })
+        }
+
+
+        }
+
+}
+
+customElements.define('Gallery_2026', Horizontal_Gallary);
+customElements.define('Gallery_2027', Horizontal_Gallary);
